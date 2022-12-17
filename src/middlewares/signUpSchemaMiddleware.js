@@ -6,7 +6,6 @@ export async function signUpSchemaMd(req, res, next) {
     const validation = signUpSchema.validate(req.body);
     if (validation.error) {
         res.status(422).send(validation.error.details[0].message)
-        console.log(validation.error.details.message)
         return
     }
     const users= await connection.query("SELECT * FROM users WHERE email=$1",[email]);
