@@ -9,17 +9,21 @@ export async function signInSchemaMd(req, res, next) {
         res.status(422).send(validation.error.details[0].message)
         return
     }
+    try {
+        const users = await connection.query("SELECT * FROM users WHERE email=$1", [email]);
 
-    const users = await connection.query("SELECT * FROM users WHERE email=$1", [email]);
 
-
-    if (users.rowCount === 0 || !bcrypt.compareSync(password, users.rows[0].password)) {
-        res.sendStatus(401)
-        return
+        if (users.rowCount === 0 || !bcrypt.compareSync(password, users.rows[0].password)) {
+            res.sendStatus(401)
+            return
+        }
+        const { id } = users.rows[0]
+        req.info = {
+            id
+        };
+    } catch (error) {
+        res.sendStatus(500)
     }
-    const {id} = users.rows[0]
-    req.info = {
-        id
-    };
+
     next();
 }

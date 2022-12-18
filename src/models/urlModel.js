@@ -1,5 +1,5 @@
 import joi from "joi";
 
-export const signInSchema = joi.object({
+export const urlSchema = joi.object({
     url: joi.string().required()
 });
