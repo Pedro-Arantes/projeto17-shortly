@@ -18,8 +18,16 @@ export  async function postShortUrl (req, res){
     }
 }
 export  async function getUrl  (req, res){
-
+    const {id} = req.params
     try {
+        const urls = await connection.query('SELECT id,"shortUrl",url  FROM urls WHERE id=$1',[id])
+
+        if (urls.rowCount <=0) {
+            res.sendStatus(404)
+            return
+        }
+
+        res.status(200).send(urls.rows[0])
         
     } catch (error) {
         console.log(error)
