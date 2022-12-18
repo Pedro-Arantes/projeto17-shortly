@@ -28,15 +28,25 @@ export  async function getUrl  (req, res){
         }
 
         res.status(200).send(urls.rows[0])
-        
+
     } catch (error) {
         console.log(error)
         res.sendStatus(500)
     }
 }
 export  async function getUrlOpen  (req, res){
-
+    const {shortUrl} = req.params
     try {
+        const urls = await connection.query('SELECT url ,"visitedCount"FROM urls WHERE "shortUrl"=$1',[shortUrl])
+
+        if (urls.rowCount<=0) {
+            res.sendStatus(404)
+        }
+
+        const plus = Number(urls.rows[0].visitedCount) +1
+        const urlUp = await connection.query('UPDATE urls SET "visitedCount"=$1 ',[plus])
+
+        res.redirect(urls.rows[0].url)
         
     } catch (error) {
         console.log(error)
@@ -44,9 +54,10 @@ export  async function getUrlOpen  (req, res){
     }
 }
 export  async function deleteUrl  (req, res){
-
+    const {id} = req.params
     try {
-        
+        const delUrls = await connection.query('DELETE FROM urls WHERE id=$1',[id])
+        res.sendStatus(204);
     } catch (error) {
         console.log(error)
         res.sendStatus(500)
