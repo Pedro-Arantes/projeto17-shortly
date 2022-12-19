@@ -12,6 +12,5 @@ app.use(signRouters);
 app.use(usersRouters);
 app.use(urlsRouters)
 
-app.listen(4000, () => {
-    console.log('Running on http://localhost:4000')
-});
+const port = process.env.PORT || 4000;
+app.listen(port, () => console.log(`Server running in port: ${port}`));
