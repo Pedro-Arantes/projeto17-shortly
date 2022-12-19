@@ -43,8 +43,7 @@ export  async function getUrlOpen  (req, res){
             res.sendStatus(404)
         }
 
-        const plus = Number(urls.rows[0].visitedCount) +1
-        const urlUp = await connection.query('UPDATE urls SET "visitedCount"=$1 ',[plus])
+        const urlUp = await connection.query('UPDATE urls SET "visitedCount"="visitedCount"+1 ')
 
         res.redirect(urls.rows[0].url)
         
