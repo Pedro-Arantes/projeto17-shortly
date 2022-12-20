@@ -24,9 +24,11 @@ export async function delUrlMd(req,res,next){
         }
 
     } catch (error) {
-        
+        console.log(error)
         res.sendStatus(500)
+        return
     }
+
     next();
 
 }

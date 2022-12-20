@@ -7,7 +7,13 @@ export async function getUsers(req, res) {
         const users = await connection.query(`SELECT 
         u.id,
         username AS name,
-        SUM(ur."visitedCount") AS "visitCount",
+        CASE WHEN
+        SUM(ur."visitedCount") = 0 
+        THEN 0 
+        WHEN SUM(ur."visitedCount") 
+        IS NULL
+        THEN 0
+        END AS "visitCount",
         JSON_AGG(json_build_object(
             'id',ur.id,
             'shortUrl',ur."shortUrl",
@@ -15,7 +21,7 @@ export async function getUsers(req, res) {
             'visitCount',ur."visitedCount"
         )) AS "shortenedUrls"
         FROM users u 
-        JOIN urls ur 
+        LEFT JOIN urls ur 
         ON u.id=ur.user_id 
         WHERE u.id=$1 
         GROUP BY u.id;`, [user_id])
@@ -33,10 +39,18 @@ export async function getRanking(req, res) {
         const ranking = await connection.query(`SELECT 
         u.id,
         u.username AS name,
-        COUNT(ur.id) AS "linksCount",
-        SUM(ur."visitedCount") AS "visitCount" 
+        CASE WHEN COUNT(ur.id) = 0 THEN 0 
+        ELSE COUNT(ur.id) 
+        END AS "linksCount",
+        CASE WHEN SUM(ur."visitedCount") =0 
+        THEN 0 
+        WHEN SUM(ur."visitedCount") 
+        IS NULL
+        THEN 0
+        ELSE SUM(ur."visitedCount") 
+        END AS "visitCount" 
         FROM users u 
-        JOIN  urls ur
+        LEFT JOIN  urls ur
         ON u.id=ur.user_id  
         GROUP BY u.id 
         ORDER BY "visitCount" DESC

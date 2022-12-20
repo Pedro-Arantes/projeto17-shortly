@@ -54,11 +54,16 @@ export  async function getUrlOpen  (req, res){
 }
 export  async function deleteUrl  (req, res){
     const {id} = req.params
+    
     try {
+        
         const delUrls = await connection.query('DELETE FROM urls WHERE id=$1',[id])
         res.sendStatus(204);
+        return
     } catch (error) {
-        console.log(error)
+      
+        console.log(error.message)
         res.sendStatus(500)
+        return
     }
 }
