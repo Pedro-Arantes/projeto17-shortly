@@ -21,7 +21,7 @@ export async function getUsers(req, res) {
             'visitCount',ur."visitedCount"
         )) AS "shortenedUrls"
         FROM users u 
-        LEFT JOIN urls ur 
+        JOIN urls ur 
         ON u.id=ur.user_id 
         WHERE u.id=$1 
         GROUP BY u.id;`, [user_id])
