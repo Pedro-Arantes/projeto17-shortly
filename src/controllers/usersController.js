@@ -14,14 +14,15 @@ export async function getUsers(req, res) {
         IS NULL
         THEN 0
         END AS "visitCount",
-        JSON_AGG(json_build_object(
+        COALESCE(ARRAY_AGG(   json_build_object(
             'id',ur.id,
             'shortUrl',ur."shortUrl",
             'url',ur.url,
             'visitCount',ur."visitedCount"
-        )) AS "shortenedUrls"
+        )) FILTER (where ur.id is not null)
+        , ARRAY[]::JSON[])    AS "shortenedUrls"
         FROM users u 
-        JOIN urls ur 
+        LEFT JOIN urls ur 
         ON u.id=ur.user_id 
         WHERE u.id=$1 
         GROUP BY u.id;`, [user_id])
